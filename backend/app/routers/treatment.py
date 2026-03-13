@@ -28,6 +28,17 @@ async def lookup_treatment(disease_name: str):
     return get_treatment(disease_name)
 
 
+@router.get("/image-lookup/{disease_name}")
+async def lookup_image_treatment(disease_name: str):
+    """
+    Look up treatment recommendation from image_disease_treatment.json.
+    Returns medicines list, treatment_duration, and clinical notes
+    for the disease name predicted by DenseNet121 image model.
+    """
+    from ..services.image_treatment_service import get_image_treatment
+    return get_image_treatment(disease_name)
+
+
 # Demo medication database
 MEDICATION_DATABASE = {
     "amoxicillin": {

@@ -110,6 +110,7 @@ class SOAPReportCreate(BaseModel):
     clinical_record_id: str
     diagnosis_id: Optional[str] = None
     treatment_id: Optional[str] = None
+    image_disease_name: Optional[str] = None  # Disease name from image analysis
     auto_generate: bool = True  # Auto-fill from clinical data
 
 

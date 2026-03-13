@@ -430,14 +430,20 @@ async def generate_report(
         image_references=[img.image_id for img in (clinical_input.images or [])]
     )
     
-    primary_disease = diagnosis.get("predictions", [{}])[0].get("disease_name", "Pending") if diagnosis else "Pending evaluation"
+    # Determine primary disease: text-based diagnosis → image-based → pending
+    if diagnosis:
+        primary_disease = diagnosis.get("predictions", [{}])[0].get("disease_name", "Pending")
+    elif request.image_disease_name:
+        primary_disease = request.image_disease_name.replace("_", " ").title()
+    else:
+        primary_disease = "Pending evaluation"
     
     assessment = AssessmentSection(
         primary_diagnosis=primary_disease,
         differential_diagnoses=[p.get("disease_name") for p in diagnosis.get("predictions", [])[1:4]] if diagnosis else [],
         ai_predictions=diagnosis.get("predictions", [])[:3] if diagnosis else None,
         ai_confidence=None,
-        prognosis="Good with appropriate treatment" if diagnosis else "Pending evaluation"
+        prognosis="Good with appropriate treatment" if (diagnosis or request.image_disease_name) else "Pending evaluation"
     )
     
     # Build plan: use MongoDB treatment if available, otherwise look up treatment KB
@@ -451,7 +457,7 @@ async def generate_report(
             emergency_instructions=treatment.get("emergency_instructions") or "Contact clinic if symptoms worsen"
         )
     else:
-        # Look up treatment knowledge base by disease name
+        # Look up text-based treatment knowledge base first
         kb_treatment = get_treatment(primary_disease)
         if kb_treatment.get("found"):
             plan_medications = [
@@ -465,11 +471,26 @@ async def generate_report(
                 emergency_instructions="Contact clinic if symptoms worsen"
             )
         else:
-            plan = PlanSection(
-                medications=[],
-                follow_up_appointments=["Schedule follow-up as needed"],
-                emergency_instructions="Contact clinic if symptoms worsen"
-            )
+            # Fall back to image disease treatment knowledge base
+            from ..services.image_treatment_service import get_image_treatment
+            img_treatment = get_image_treatment(request.image_disease_name)
+            if img_treatment.get("found"):
+                plan_medications = [
+                    {"name": med, "dosage": {"instructions": None, "dose_mg": None, "duration_days": None}}
+                    for med in img_treatment.get("medicines", [])
+                ]
+                plan = PlanSection(
+                    medications=plan_medications,
+                    dietary_recommendations=img_treatment.get("notes"),
+                    follow_up_appointments=[f"Follow-up after {img_treatment.get('treatment_duration', 'as needed')}"],
+                    emergency_instructions="Contact clinic if symptoms worsen"
+                )
+            else:
+                plan = PlanSection(
+                    medications=[],
+                    follow_up_appointments=["Schedule follow-up as needed"],
+                    emergency_instructions="Contact clinic if symptoms worsen"
+                )
     
     # Get doctor name
     users = Database.get_collection("users")
