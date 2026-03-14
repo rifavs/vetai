@@ -69,52 +69,94 @@ export default function Login() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'linear-gradient(135deg, #e8f0fe 0%, #f0f7ff 30%, #e6f9f5 70%, #f5f5fa 100%)',
-            padding: '20px',
-            fontFamily: 'var(--font-family)'
+            background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+            padding: '24px',
+            fontFamily: 'var(--font-family)',
+            position: 'relative',
+            overflow: 'hidden'
         }}>
-            <div style={{ width: '100%', maxWidth: 460 }}>
+            {/* Dynamic Background Elements */}
+            <div className="animate-blob" style={{
+                position: 'absolute',
+                top: '-10%',
+                left: '10%',
+                width: '40vw',
+                height: '40vw',
+                background: 'rgba(59, 130, 246, 0.15)',
+                filter: 'blur(80px)',
+                borderRadius: '50%',
+                zIndex: 0
+            }} />
+            <div className="animate-blob animation-delay-2000" style={{
+                position: 'absolute',
+                bottom: '-10%',
+                right: '10%',
+                width: '35vw',
+                height: '35vw',
+                background: 'rgba(6, 182, 212, 0.15)',
+                filter: 'blur(80px)',
+                borderRadius: '50%',
+                zIndex: 0
+            }} />
+
+            <div style={{ width: '100%', maxWidth: 480, position: 'relative', zIndex: 10 }}>
 
                 {/* Logo Section */}
-                <div style={{ textAlign: 'center', marginBottom: 32 }}>
+                <div style={{ 
+                    textAlign: 'center', 
+                    marginBottom: 40,
+                    animation: 'fadeIn 0.8s ease-out'
+                }}>
                     <div style={{
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: 64,
-                        height: 64,
-                        background: 'linear-gradient(135deg, #3b82f6, #06b6d4)',
-                        borderRadius: 16,
-                        marginBottom: 12,
-                        boxShadow: '0 8px 30px rgba(59,130,246,0.3)'
+                        width: 72,
+                        height: 72,
+                        background: 'rgba(255, 255, 255, 0.9)',
+                        backdropFilter: 'blur(8px)',
+                        borderRadius: 20,
+                        marginBottom: 16,
+                        boxShadow: '0 8px 32px rgba(31, 38, 135, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.4)'
                     }}>
-                        <PawPrint size={32} color="white" />
+                        <PawPrint size={36} color="#3b82f6" />
                     </div>
                     <h1 style={{
-                        fontSize: '1.75rem',
-                        fontWeight: 700,
-                        color: '#1e293b',
-                        margin: 0
+                        fontSize: '2.5rem',
+                        fontWeight: 800,
+                        color: '#0f172a',
+                        margin: 0,
+                        letterSpacing: '-0.025em',
+                        background: 'linear-gradient(to right, #1e293b, #3b82f6)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent'
                     }}>VetAI</h1>
                     <p style={{
                         color: '#64748b',
-                        fontSize: '0.9rem',
+                        fontSize: '1rem',
+                        fontWeight: 500,
                         marginTop: 4
                     }}>Clinical Decision Support System</p>
                 </div>
 
-                {/* Main Card */}
+                {/* Main Glass Card */}
                 <div style={{
-                    background: 'white',
-                    borderRadius: 16,
-                    boxShadow: '0 4px 24px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04)',
-                    overflow: 'hidden'
+                    background: 'rgba(255, 255, 255, 0.7)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                    borderRadius: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.5)',
+                    boxShadow: 'var(--shadow-premium)',
+                    overflow: 'hidden',
+                    animation: 'fadeIn 1s ease-out'
                 }}>
 
                     {/* Role Tabs */}
                     <div style={{
                         display: 'flex',
-                        borderBottom: '2px solid #f1f5f9'
+                        background: 'rgba(241, 245, 249, 0.5)',
+                        padding: '6px'
                     }}>
                         <button
                             type="button"
@@ -124,20 +166,21 @@ export default function Login() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                gap: 8,
-                                padding: '16px 0',
+                                gap: 10,
+                                padding: '14px 0',
                                 border: 'none',
-                                background: activeRole === 'staff' ? 'white' : '#f8fafc',
-                                color: activeRole === 'staff' ? '#3b82f6' : '#94a3b8',
-                                fontWeight: 600,
+                                borderRadius: '18px',
+                                background: activeRole === 'staff' ? 'white' : 'transparent',
+                                color: activeRole === 'staff' ? '#3b82f6' : '#64748b',
+                                fontWeight: activeRole === 'staff' ? 700 : 600,
                                 fontSize: '0.95rem',
                                 cursor: 'pointer',
-                                borderBottom: activeRole === 'staff' ? '3px solid #3b82f6' : '3px solid transparent',
-                                transition: 'all 0.2s ease',
+                                boxShadow: activeRole === 'staff' ? '0 4px 12px rgba(0,0,0,0.05)' : 'none',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                 fontFamily: 'inherit'
                             }}
                         >
-                            <ClipboardList size={18} />
+                            <ClipboardList size={20} />
                             Staff
                         </button>
                         <button
@@ -148,109 +191,97 @@ export default function Login() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                gap: 8,
-                                padding: '16px 0',
+                                gap: 10,
+                                padding: '14px 0',
                                 border: 'none',
-                                background: activeRole === 'doctor' ? 'white' : '#f8fafc',
-                                color: activeRole === 'doctor' ? '#3b82f6' : '#94a3b8',
-                                fontWeight: 600,
+                                borderRadius: '18px',
+                                background: activeRole === 'doctor' ? 'white' : 'transparent',
+                                color: activeRole === 'doctor' ? '#3b82f6' : '#64748b',
+                                fontWeight: activeRole === 'doctor' ? 700 : 600,
                                 fontSize: '0.95rem',
                                 cursor: 'pointer',
-                                borderBottom: activeRole === 'doctor' ? '3px solid #3b82f6' : '3px solid transparent',
-                                transition: 'all 0.2s ease',
+                                boxShadow: activeRole === 'doctor' ? '0 4px 12px rgba(0,0,0,0.05)' : 'none',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                 fontFamily: 'inherit'
                             }}
                         >
-                            <Stethoscope size={18} />
+                            <Stethoscope size={20} />
                             Doctor
                         </button>
                     </div>
 
                     {/* Form Content */}
-                    <div style={{ padding: '32px 36px 36px' }}>
+                    <div style={{ padding: '40px 48px' }}>
 
                         {/* Heading */}
-                        <h2 style={{
-                            fontSize: '1.5rem',
-                            fontWeight: 700,
-                            color: '#1e293b',
-                            marginBottom: 24
-                        }}>
-                            {isRegister ? `${roleTitle} Registration` : `${roleTitle} Login`}
-                        </h2>
+                        <div style={{ marginBottom: 32 }}>
+                            <h2 style={{
+                                fontSize: '1.75rem',
+                                fontWeight: 800,
+                                color: '#0f172a',
+                                marginBottom: 8,
+                                letterSpacing: '-0.02em'
+                            }}>
+                                {isRegister ? 'Join VetAI' : 'Welcome Back'}
+                            </h2>
+                            <p style={{ color: '#64748b', fontSize: '0.95rem' }}>
+                                {isRegister ? `Register as a ${roleTitle} to get started.` : `Sign in to your ${roleTitle} account.`}
+                            </p>
+                        </div>
 
                         {/* Error Alert */}
                         {error && (
                             <div style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: 10,
-                                padding: '12px 16px',
+                                gap: 12,
+                                padding: '14px 18px',
                                 background: '#fef2f2',
-                                border: '1px solid #fecaca',
-                                borderRadius: 10,
-                                marginBottom: 20,
-                                color: '#dc2626',
-                                fontSize: '0.9rem'
+                                border: '1px solid #fee2e2',
+                                borderRadius: 12,
+                                marginBottom: 24,
+                                color: '#ef4444',
+                                fontSize: '0.9rem',
+                                fontWeight: 500
                             }}>
-                                <AlertCircle size={18} />
+                                <AlertCircle size={20} />
                                 <span>{error}</span>
                             </div>
                         )}
 
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
                             {/* Full Name (register only) */}
                             {isRegister && (
-                                <div style={{ marginBottom: 20 }}>
-                                    <label style={{
-                                        display: 'block',
-                                        fontSize: '0.9rem',
-                                        fontWeight: 600,
-                                        color: '#3b82f6',
-                                        marginBottom: 8
-                                    }}>Full Name</label>
-                                    <div style={{ position: 'relative' }}>
-                                        <input
-                                            type="text"
-                                            name="full_name"
-                                            value={formData.full_name}
-                                            onChange={handleChange}
-                                            placeholder={activeRole === 'doctor' ? 'Dr. John Smith' : 'John Smith'}
-                                            required
-                                            style={{
-                                                width: '100%',
-                                                padding: '12px 16px',
-                                                fontSize: '0.95rem',
-                                                border: '1.5px solid #e2e8f0',
-                                                borderRadius: 10,
-                                                outline: 'none',
-                                                transition: 'border-color 0.2s, box-shadow 0.2s',
-                                                fontFamily: 'inherit',
-                                                color: '#334155'
-                                            }}
-                                            onFocus={e => {
-                                                e.target.style.borderColor = '#3b82f6'
-                                                e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.1)'
-                                            }}
-                                            onBlur={e => {
-                                                e.target.style.borderColor = '#e2e8f0'
-                                                e.target.style.boxShadow = 'none'
-                                            }}
-                                        />
-                                    </div>
+                                <div className="form-group" style={{ margin: 0 }}>
+                                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <User size={16} color="#64748b" />
+                                        Full Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="full_name"
+                                        value={formData.full_name}
+                                        onChange={handleChange}
+                                        placeholder={activeRole === 'doctor' ? 'Dr. John Smith' : 'John Smith'}
+                                        required
+                                        className="form-input"
+                                        style={{
+                                            borderRadius: 12,
+                                            padding: '12px 16px',
+                                            background: 'rgba(255, 255, 255, 0.8)',
+                                            border: '1.5px solid rgba(226, 232, 240, 0.8)'
+                                        }}
+                                    />
                                 </div>
                             )}
 
                             {/* Email */}
-                            <div style={{ marginBottom: 20 }}>
-                                <label style={{
-                                    display: 'block',
-                                    fontSize: '0.9rem',
-                                    fontWeight: 600,
-                                    color: '#3b82f6',
-                                    marginBottom: 8
-                                }}>Email</label>
+                            <div className="form-group" style={{ margin: 0 }}>
+                                <label className="form-label" style={{ fontWeight: 600, color: '#334155', display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <Mail size={16} color="#64748b" />
+                                    Email Address
+                                </label>
                                 <input
                                     type="email"
                                     name="email"
@@ -258,37 +289,22 @@ export default function Login() {
                                     onChange={handleChange}
                                     placeholder={activeRole === 'doctor' ? 'doctor@hospital.com' : 'staff@hospital.com'}
                                     required
+                                    className="form-input"
                                     style={{
-                                        width: '100%',
+                                        borderRadius: 12,
                                         padding: '12px 16px',
-                                        fontSize: '0.95rem',
-                                        border: '1.5px solid #e2e8f0',
-                                        borderRadius: 10,
-                                        outline: 'none',
-                                        transition: 'border-color 0.2s, box-shadow 0.2s',
-                                        fontFamily: 'inherit',
-                                        color: '#334155'
-                                    }}
-                                    onFocus={e => {
-                                        e.target.style.borderColor = '#3b82f6'
-                                        e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.1)'
-                                    }}
-                                    onBlur={e => {
-                                        e.target.style.borderColor = '#e2e8f0'
-                                        e.target.style.boxShadow = 'none'
+                                        background: 'rgba(255, 255, 255, 0.8)',
+                                        border: '1.5px solid rgba(226, 232, 240, 0.8)'
                                     }}
                                 />
                             </div>
 
                             {/* Password */}
-                            <div style={{ marginBottom: isRegister ? 20 : 8 }}>
-                                <label style={{
-                                    display: 'block',
-                                    fontSize: '0.9rem',
-                                    fontWeight: 600,
-                                    color: '#3b82f6',
-                                    marginBottom: 8
-                                }}>Password</label>
+                            <div className="form-group" style={{ margin: 0, position: 'relative' }}>
+                                <label className="form-label" style={{ fontWeight: 600, color: '#334155', display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <Lock size={16} color="#64748b" />
+                                    Password
+                                </label>
                                 <div style={{ position: 'relative' }}>
                                     <input
                                         type={showPassword ? 'text' : 'password'}
@@ -298,24 +314,13 @@ export default function Login() {
                                         placeholder="••••••••"
                                         required
                                         minLength={6}
+                                        className="form-input"
                                         style={{
-                                            width: '100%',
-                                            padding: '12px 44px 12px 16px',
-                                            fontSize: '0.95rem',
-                                            border: '1.5px solid #e2e8f0',
-                                            borderRadius: 10,
-                                            outline: 'none',
-                                            transition: 'border-color 0.2s, box-shadow 0.2s',
-                                            fontFamily: 'inherit',
-                                            color: '#334155'
-                                        }}
-                                        onFocus={e => {
-                                            e.target.style.borderColor = '#3b82f6'
-                                            e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.1)'
-                                        }}
-                                        onBlur={e => {
-                                            e.target.style.borderColor = '#e2e8f0'
-                                            e.target.style.boxShadow = 'none'
+                                            borderRadius: 12,
+                                            padding: '12px 16px',
+                                            paddingRight: 48,
+                                            background: 'rgba(255, 255, 255, 0.8)',
+                                            border: '1.5px solid rgba(226, 232, 240, 0.8)'
                                         }}
                                     />
                                     <button
@@ -323,7 +328,7 @@ export default function Login() {
                                         onClick={() => setShowPassword(!showPassword)}
                                         style={{
                                             position: 'absolute',
-                                            right: 12,
+                                            right: 14,
                                             top: '50%',
                                             transform: 'translateY(-50%)',
                                             background: 'none',
@@ -331,10 +336,14 @@ export default function Login() {
                                             cursor: 'pointer',
                                             color: '#94a3b8',
                                             padding: 4,
-                                            display: 'flex'
+                                            display: 'flex',
+                                            borderRadius: '8px',
+                                            transition: 'all 0.2s'
                                         }}
+                                        onMouseEnter={e => e.target.style.background = 'rgba(0,0,0,0.05)'}
+                                        onMouseLeave={e => e.target.style.background = 'none'}
                                     >
-                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                     </button>
                                 </div>
                             </div>
@@ -343,60 +352,41 @@ export default function Login() {
                             <button
                                 type="submit"
                                 disabled={loading}
+                                className="btn-primary"
                                 style={{
                                     width: '100%',
-                                    padding: '13px 24px',
-                                    marginTop: 20,
+                                    padding: '16px 24px',
+                                    marginTop: 8,
                                     fontSize: '1rem',
-                                    fontWeight: 600,
-                                    color: 'white',
-                                    background: loading
-                                        ? '#93c5fd'
-                                        : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                                    border: 'none',
-                                    borderRadius: 10,
+                                    fontWeight: 700,
+                                    borderRadius: 14,
                                     cursor: loading ? 'not-allowed' : 'pointer',
-                                    transition: 'all 0.2s ease',
-                                    boxShadow: loading ? 'none' : '0 4px 14px rgba(59,130,246,0.35)',
-                                    fontFamily: 'inherit',
+                                    boxShadow: '0 8px 24px rgba(59, 130, 246, 0.2)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    gap: 8
-                                }}
-                                onMouseEnter={e => {
-                                    if (!loading) {
-                                        e.target.style.transform = 'translateY(-1px)'
-                                        e.target.style.boxShadow = '0 6px 20px rgba(59,130,246,0.4)'
-                                    }
-                                }}
-                                onMouseLeave={e => {
-                                    e.target.style.transform = 'translateY(0)'
-                                    e.target.style.boxShadow = '0 4px 14px rgba(59,130,246,0.35)'
+                                    gap: 12,
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                                 }}
                             >
                                 {loading ? (
-                                    <span style={{
-                                        display: 'inline-block',
-                                        width: 20,
-                                        height: 20,
-                                        border: '2px solid rgba(255,255,255,0.3)',
-                                        borderTopColor: 'white',
-                                        borderRadius: '50%',
-                                        animation: 'spin 0.8s linear infinite'
-                                    }} />
+                                    <div className="loading-spinner" style={{ borderTopColor: 'white' }} />
                                 ) : (
-                                    isRegister ? 'Create Account' : 'Login'
+                                    <>
+                                        {isRegister ? 'Create Account' : 'Login to System'}
+                                        {!isRegister && <PawPrint size={18} style={{ opacity: 0.8 }} />}
+                                    </>
                                 )}
                             </button>
                         </form>
 
-                        {/* Switch login/register */}
+                        {/* Footer Link */}
                         <div style={{
                             textAlign: 'center',
-                            marginTop: 24,
-                            fontSize: '0.9rem',
-                            color: '#64748b'
+                            marginTop: 32,
+                            fontSize: '0.95rem',
+                            color: '#64748b',
+                            fontWeight: 500
                         }}>
                             {isRegister ? 'Already have an account? ' : "Don't have an account? "}
                             <button
@@ -407,30 +397,34 @@ export default function Login() {
                                     border: 'none',
                                     color: '#3b82f6',
                                     cursor: 'pointer',
-                                    fontWeight: 600,
-                                    fontSize: '0.9rem',
+                                    fontWeight: 700,
+                                    fontSize: '0.95rem',
                                     fontFamily: 'inherit',
-                                    textDecoration: 'none',
-                                    padding: 0
+                                    padding: '0 4px'
                                 }}
-                                onMouseEnter={e => e.target.style.textDecoration = 'underline'}
-                                onMouseLeave={e => e.target.style.textDecoration = 'none'}
                             >
-                                {isRegister ? 'Sign in' : 'Register here'}
+                                {isRegister ? 'Sign In' : 'Register Here'}
                             </button>
                         </div>
                     </div>
                 </div>
 
-                {/* Footer */}
-                <p style={{
+                {/* System Label */}
+                <div style={{
                     textAlign: 'center',
-                    marginTop: 24,
-                    color: '#94a3b8',
-                    fontSize: '0.8rem'
+                    marginTop: 40,
+                    opacity: 0.6
                 }}>
-                    © 2024 VetAI Clinical Decision Support
-                </p>
+                    <p style={{
+                        color: '#64748b',
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        letterSpacing: '0.05em',
+                        textTransform: 'uppercase'
+                    }}>
+                        © 2026 VetAI Healthcare Systems • Secure Access
+                    </p>
+                </div>
             </div>
         </div>
     )
