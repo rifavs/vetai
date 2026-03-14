@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     DATABASE_NAME: str = "vetai"
     
     # JWT Authentication
-    SECRET_KEY: str = "vetai-secret-key-change-in-production-2024"
+    SECRET_KEY: str = "vetai-secret-key-change-in-production-2026"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
     

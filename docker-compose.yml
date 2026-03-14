@@ -36,7 +36,7 @@ services:
     environment:
       - MONGODB_URL=mongodb://vetai_user:vetai_password@mongodb:27017/vetai?authSource=vetai
       - DATABASE_NAME=vetai
-      - SECRET_KEY=${SECRET_KEY:-vetai-secret-key-change-in-production-2024}
+      - SECRET_KEY=${SECRET_KEY:-vetai-secret-key-change-in-production-2026}
       - DEBUG=False
 
     volumes:
