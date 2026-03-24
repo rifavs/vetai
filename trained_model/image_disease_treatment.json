@@ -1,0 +1,119 @@
+{
+    "bacterial_dermatosis": {
+        "medicines": [
+            "Amoxicillin-Clavulanate",
+            "Cephalexin",
+            "Chlorhexidine Shampoo"
+        ],
+        "treatment_duration": "14-21 days",
+        "notes": "Keep affected area clean and dry - recheck every 7 days"
+    },
+    "cataract": {
+        "medicines": [
+            "Phacoemulsification Surgery",
+            "Dorzolamide Eye Drops",
+            "Prednisolone Acetate Eye Drops"
+        ],
+        "treatment_duration": "30-45 days post surgery",
+        "notes": "Surgical removal is primary treatment - regular eye pressure monitoring"
+    },
+    "cherry_eye": {
+        "medicines": [
+            "Tacrolimus Eye Drops",
+            "Prednisolone Acetate Eye Drops",
+            "Surgical Repositioning"
+        ],
+        "treatment_duration": "14-21 days",
+        "notes": "Surgical repositioning preferred over removal - keep eye moist"
+    },
+    "conjunctivitis": {
+        "medicines": [
+            "Chloramphenicol Eye Drops",
+            "Tobramycin Eye Drops",
+            "Dexamethasone Eye Drops"
+        ],
+        "treatment_duration": "7-14 days",
+        "notes": "Clean discharge from eye twice daily - avoid touching eye"
+    },
+    "flea_allergy": {
+        "medicines": [
+            "Fipronil",
+            "Imidacloprid",
+            "Prednisolone"
+        ],
+        "treatment_duration": "14-30 days",
+        "notes": "Treat all pets in household and environment simultaneously"
+    },
+    "foot-and-mouth": {
+        "medicines": [
+            "Potassium Permanganate Foot Bath",
+            "Ringer's Lactate",
+            "Meloxicam"
+        ],
+        "treatment_duration": "14 days",
+        "notes": "REPORTABLE DISEASE - Contact authorities immediately"
+    },
+    "fungal_infections": {
+        "medicines": [
+            "Itraconazole",
+            "Terbinafine",
+            "Miconazole Shampoo"
+        ],
+        "treatment_duration": "28-42 days",
+        "notes": "Disinfect bedding and environment - contagious to humans"
+    },
+    "glaucoma": {
+        "medicines": [
+            "Dorzolamide Eye Drops",
+            "Timolol Eye Drops",
+            "Mannitol"
+        ],
+        "treatment_duration": "30-60 days",
+        "notes": "Monitor intraocular pressure every 7 days - emergency if pressure very high"
+    },
+    "hypersensitivity_allergic_dermatosis": {
+        "medicines": [
+            "Prednisolone",
+            "Cyclosporine",
+            "Chlorphenamine"
+        ],
+        "treatment_duration": "21-30 days",
+        "notes": "Identify and remove allergen source - hypoallergenic diet may help"
+    },
+    "iris_atrophy": {
+        "medicines": [
+            "Prednisolone Acetate Eye Drops",
+            "Dorzolamide Eye Drops",
+            "Vitamin E"
+        ],
+        "treatment_duration": "30-45 days",
+        "notes": "Avoid bright light exposure - use protective eyewear outdoors"
+    },
+    "lumpy": {
+        "medicines": [
+            "Homologous Live Attenuated Vaccine",
+            "Enrofloxacin",
+            "Meloxicam"
+        ],
+        "treatment_duration": "21-28 days",
+        "notes": "REPORTABLE DISEASE - Strict quarantine required immediately"
+    },
+    "ringworm": {
+        "medicines": [
+            "Itraconazole",
+            "Terbinafine",
+            "Miconazole Shampoo"
+        ],
+        "treatment_duration": "42-56 days",
+        "notes": "Disinfect environment - contagious to humans"
+    },
+    "scabies": {
+        "medicines": [
+            "Ivermectin",
+            "Selamectin",
+            "Amitraz Dip"
+        ],
+        "treatment_duration": "28-42 days",
+        "notes": "Treat all animals in contact - wash all bedding thoroughly"
+    }
+}

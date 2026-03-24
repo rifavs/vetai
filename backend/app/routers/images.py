@@ -30,13 +30,12 @@ class ImageMetadata(BaseModel):
 
 
 class ImageAnalysisResponse(BaseModel):
-    """Image analysis response."""
+    """Image analysis response from DenseNet121 disease detection model."""
     image_id: str
     image_type: str
-    detected_features: list
-    suggested_conditions: list
-    color_analysis: dict
-    cnn_feature_summary: dict
+    predictions: list
+    top_prediction: Optional[dict] = None
+    model_info: dict
     analyzed_at: str
 
 
@@ -99,9 +98,9 @@ async def analyze_image(
     current_user: User = Depends(require_doctor)
 ):
     """
-    Analyze an uploaded image using AI (MobileNetV2 transfer learning).
+    Analyze an uploaded image using trained DenseNet121 disease detection model.
     
-    Returns detected features and suggested veterinary conditions (skin/eye).
+    Returns ranked disease predictions with confidence scores (14 disease classes).
     """
     # Get image from database
     images = Database.get_collection("images")

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
-import { clinicalAPI, diagnosisAPI, patientsAPI, treatmentAPI, reportsAPI, imagesAPI, voiceAPI } from '../services/api'
-import { Brain, AlertCircle, CheckCircle, HelpCircle, Pill, FileText, Download, Upload, Image, X, Mic, MicOff, Volume2, Target, Shield, Scan, Eye } from 'lucide-react'
+import { clinicalAPI, diagnosisAPI, patientsAPI, treatmentAPI, reportsAPI, imagesAPI } from '../services/api'
+import { Brain, AlertCircle, CheckCircle, HelpCircle, Pill, FileText, Download, Upload, Image, X, Target, Shield } from 'lucide-react'
 
 export default function DiagnosisPanel() {
     const { recordId } = useParams()
@@ -35,16 +35,10 @@ export default function DiagnosisPanel() {
 
     // Image upload states
     const [uploadedImages, setUploadedImages] = useState([])
-    const [imageType, setImageType] = useState('skin')
     const [isUploading, setIsUploading] = useState(false)
     const [imageAnalysis, setImageAnalysis] = useState(null)
 
-    // Voice recording states
-    const [isRecording, setIsRecording] = useState(false)
-    const [mediaRecorder, setMediaRecorder] = useState(null)
-    const [audioChunks, setAudioChunks] = useState([])
-    const [voiceTranscription, setVoiceTranscription] = useState(null)
-    const [isTranscribing, setIsTranscribing] = useState(false)
+
 
     // Fetch clinical record if editing existing
     const { data: clinicalRecord } = useQuery({
@@ -106,9 +100,14 @@ export default function DiagnosisPanel() {
         }
     })
 
-    // Treatment mutation
+    // Treatment mutation — lookup from treatment knowledge base (text or image)
     const treatmentMutation = useMutation({
-        mutationFn: (data) => treatmentAPI.recommend(data),
+        mutationFn: ({ diseaseName, source }) => {
+            if (source === 'image') {
+                return treatmentAPI.imageLookup(diseaseName)
+            }
+            return treatmentAPI.lookup(diseaseName)
+        },
         onSuccess: (res) => {
             setTreatmentPlan(res.data)
             setActiveTab('treatment')
@@ -174,7 +173,7 @@ export default function DiagnosisPanel() {
             try {
                 const formData = new FormData()
                 formData.append('file', file)
-                formData.append('image_type', imageType)
+                formData.append('image_type', 'general')
 
                 // Upload
                 const uploadRes = await imagesAPI.upload(formData)
@@ -182,7 +181,7 @@ export default function DiagnosisPanel() {
 
                 setUploadedImages(prev => [...prev, imageData])
 
-                // Auto-analyze with patient species
+                // Auto-analyze
                 const analyzeRes = await imagesAPI.analyze(imageData.image_id)
                 setImageAnalysis(analyzeRes.data)
             } catch (err) {
@@ -201,76 +200,20 @@ export default function DiagnosisPanel() {
         }
     }
 
-    // Voice recording handlers
-    const startRecording = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-            const recorder = new MediaRecorder(stream)
-            const chunks = []
 
-            recorder.ondataavailable = (e) => {
-                if (e.data.size > 0) chunks.push(e.data)
-            }
-
-            recorder.onstop = () => {
-                const blob = new Blob(chunks, { type: 'audio/webm' })
-                uploadAndTranscribe(blob)
-                stream.getTracks().forEach(track => track.stop())
-            }
-
-            recorder.start()
-            setMediaRecorder(recorder)
-            setIsRecording(true)
-            setAudioChunks(chunks)
-        } catch (err) {
-            console.error('Microphone access denied:', err)
-        }
-    }
-
-    const stopRecording = () => {
-        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-            mediaRecorder.stop()
-        }
-        setIsRecording(false)
-    }
-
-    const uploadAndTranscribe = async (audioBlob) => {
-        setIsTranscribing(true)
-        try {
-            const formData = new FormData()
-            formData.append('audio', audioBlob, 'recording.webm')
-            const res = await voiceAPI.transcribe(formData)
-            setVoiceTranscription(res.data)
-
-            // Auto-append extracted symptoms to symptom field
-            if (res.data.extracted_symptoms?.length > 0) {
-                setSymptoms(prev => {
-                    const existing = prev ? prev.split(',').map(s => s.trim()).filter(Boolean) : []
-                    const combined = [...new Set([...existing, ...res.data.extracted_symptoms])]
-                    return combined.join(', ')
-                })
-            }
-        } catch (err) {
-            console.error('Transcription failed:', err)
-        } finally {
-            setIsTranscribing(false)
-        }
-    }
 
     const handleGetTreatment = () => {
-        if (!diagnosisResult || !patient) return
+        // Check for image-based disease first
+        if (imageAnalysis?.top_prediction?.disease) {
+            const imageDisease = imageAnalysis.top_prediction.disease
+            treatmentMutation.mutate({ diseaseName: imageDisease, source: 'image' })
+            return
+        }
+        // Fall back to text-based diagnosis
+        if (!diagnosisResult) return
         const disease = finalDiagnosis || diagnosisResult.predictions?.[0]?.disease_name
         if (!disease) return
-
-        treatmentMutation.mutate({
-            patient_id: patient._id,
-            diseases: [disease],
-            species: patient.species,
-            breed: patient.breed || '',
-            weight_kg: patient.weight_kg || 10,
-            age_months: patient.age_months || 24,
-            diagnosis_id: diagnosisResult.id
-        })
+        treatmentMutation.mutate({ diseaseName: disease, source: 'text' })
     }
 
     const handleGenerateReport = () => {
@@ -280,6 +223,7 @@ export default function DiagnosisPanel() {
             clinical_record_id: recordId,
             diagnosis_id: diagnosisResult?.id || null,
             treatment_id: treatmentPlan?.id || null,
+            image_disease_name: imageAnalysis?.top_prediction?.disease || null,
             auto_generate: true
         })
     }
@@ -392,7 +336,7 @@ export default function DiagnosisPanel() {
                                 )}
 
                                 <div className="form-group">
-                                    <label className="form-label">Symptoms (comma-separated)</label>
+                                    <label className="form-label">Symptoms</label>
                                     <textarea
                                         value={symptoms}
                                         onChange={(e) => setSymptoms(e.target.value)}
@@ -400,15 +344,13 @@ export default function DiagnosisPanel() {
                                         placeholder="e.g., vomiting, lethargy, loss of appetite, diarrhea"
                                         rows={4}
                                     />
-                                    <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-gray-500)', marginTop: 'var(--space-1)' }}>
-                                        Enter observed symptoms separated by commas
-                                    </p>
+
                                 </div>
 
                                 {/* Vitals Input */}
                                 <div className="form-group" style={{ marginTop: 'var(--space-4)' }}>
                                     <label className="form-label" style={{ fontWeight: 600, marginBottom: 'var(--space-2)' }}>
-                                        🩺 Clinical Vitals (Optional — improves accuracy)
+                                        🩺 Clinical Vitals
                                     </label>
                                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-3)' }}>
                                         <div>
@@ -445,94 +387,7 @@ export default function DiagnosisPanel() {
                                     </div>
                                 </div>
 
-                                {/* Voice Recording Section */}
-                                <div className="form-group" style={{ marginTop: 'var(--space-4)' }}>
-                                    <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                                        <Volume2 size={18} />
-                                        Voice Input (Optional)
-                                    </label>
 
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-                                        <button
-                                            type="button"
-                                            onClick={isRecording ? stopRecording : startRecording}
-                                            disabled={isTranscribing}
-                                            style={{
-                                                width: 60,
-                                                height: 60,
-                                                borderRadius: '50%',
-                                                border: 'none',
-                                                background: isRecording
-                                                    ? 'var(--color-error-500)'
-                                                    : 'linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600))',
-                                                cursor: isTranscribing ? 'not-allowed' : 'pointer',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                boxShadow: isRecording
-                                                    ? '0 0 0 4px rgba(239, 68, 68, 0.3)'
-                                                    : '0 4px 12px rgba(0, 0, 0, 0.15)',
-                                                transition: 'all 0.2s ease',
-                                                animation: isRecording ? 'pulse 1.5s infinite' : 'none'
-                                            }}
-                                        >
-                                            {isRecording ? (
-                                                <MicOff size={24} color="white" />
-                                            ) : (
-                                                <Mic size={24} color="white" />
-                                            )}
-                                        </button>
-
-                                        <div style={{ flex: 1 }}>
-                                            {isRecording && (
-                                                <div style={{
-                                                    color: 'var(--color-error-500)',
-                                                    fontWeight: 600,
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 'var(--space-2)'
-                                                }}>
-                                                    <span style={{
-                                                        width: 10,
-                                                        height: 10,
-                                                        borderRadius: '50%',
-                                                        background: 'var(--color-error-500)',
-                                                        animation: 'pulse 1s infinite'
-                                                    }}></span>
-                                                    Recording... Click to stop
-                                                </div>
-                                            )}
-                                            {isTranscribing && (
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                                                    <span className="loading-spinner" style={{ width: 16, height: 16 }}></span>
-                                                    <span>Transcribing with Whisper AI...</span>
-                                                </div>
-                                            )}
-                                            {!isRecording && !isTranscribing && (
-                                                <p style={{ margin: 0, color: 'var(--color-gray-500)', fontSize: 'var(--font-size-sm)' }}>
-                                                    Click the microphone to record symptoms verbally
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {voiceTranscription && (
-                                        <div className="alert alert-info" style={{ marginTop: 'var(--space-3)' }}>
-                                            <Volume2 size={18} />
-                                            <div style={{ flex: 1 }}>
-                                                <strong>Transcription:</strong>
-                                                <p style={{ margin: 'var(--space-1) 0 0 0', fontStyle: 'italic' }}>
-                                                    "{voiceTranscription.transcription}"
-                                                </p>
-                                                {voiceTranscription.extracted_symptoms?.length > 0 && (
-                                                    <div style={{ marginTop: 'var(--space-2)', fontSize: 'var(--font-size-sm)' }}>
-                                                        <strong>Auto-detected symptoms:</strong> {voiceTranscription.extracted_symptoms.join(', ')}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
 
                                 <button
                                     className="btn btn-primary btn-lg"
@@ -568,65 +423,13 @@ export default function DiagnosisPanel() {
                             <div className="card-header">
                                 <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
                                     <Image size={20} />
-                                    Clinical Images
+                                    AI Disease Detection
                                 </h3>
+                                <p style={{ margin: '4px 0 0 0', fontSize: 'var(--font-size-sm)', color: 'var(--color-gray-500)' }}>
+                                    Upload a clinical image for AI-powered disease detection
+                                </p>
                             </div>
                             <div className="card-body">
-                                {/* Image Type Selector */}
-                                <div className="form-group">
-                                    <label className="form-label" style={{ marginBottom: 'var(--space-2)' }}>Select Image Type</label>
-                                    <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-                                        <button
-                                            type="button"
-                                            onClick={() => setImageType('skin')}
-                                            style={{
-                                                flex: 1,
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                gap: 8,
-                                                padding: '12px 16px',
-                                                border: imageType === 'skin' ? '2px solid #3b82f6' : '2px solid #e2e8f0',
-                                                borderRadius: 10,
-                                                background: imageType === 'skin' ? '#eff6ff' : 'white',
-                                                color: imageType === 'skin' ? '#3b82f6' : '#64748b',
-                                                fontWeight: 600,
-                                                fontSize: '0.9rem',
-                                                cursor: 'pointer',
-                                                transition: 'all 0.2s ease',
-                                                fontFamily: 'inherit'
-                                            }}
-                                        >
-                                            <Scan size={18} />
-                                            Skin
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => setImageType('eye')}
-                                            style={{
-                                                flex: 1,
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                gap: 8,
-                                                padding: '12px 16px',
-                                                border: imageType === 'eye' ? '2px solid #3b82f6' : '2px solid #e2e8f0',
-                                                borderRadius: 10,
-                                                background: imageType === 'eye' ? '#eff6ff' : 'white',
-                                                color: imageType === 'eye' ? '#3b82f6' : '#64748b',
-                                                fontWeight: 600,
-                                                fontSize: '0.9rem',
-                                                cursor: 'pointer',
-                                                transition: 'all 0.2s ease',
-                                                fontFamily: 'inherit'
-                                            }}
-                                        >
-                                            <Eye size={18} />
-                                            Eye
-                                        </button>
-                                    </div>
-                                </div>
-
                                 {/* Upload Drop Zone */}
                                 <div
                                     style={{
@@ -636,8 +439,7 @@ export default function DiagnosisPanel() {
                                         textAlign: 'center',
                                         cursor: 'pointer',
                                         background: '#f8fafc',
-                                        transition: 'all 0.2s ease',
-                                        marginTop: 'var(--space-2)'
+                                        transition: 'all 0.2s ease'
                                     }}
                                     onClick={() => document.getElementById('image-upload').click()}
                                     onMouseEnter={e => {
@@ -666,10 +468,10 @@ export default function DiagnosisPanel() {
                                         <div>
                                             <Upload size={36} style={{ color: '#94a3b8', marginBottom: 8 }} />
                                             <p style={{ margin: 0, color: '#475569', fontWeight: 500, fontSize: '0.95rem' }}>
-                                                Drop {imageType} images here or click to upload
+                                                Drop clinical images here or click to upload
                                             </p>
                                             <p style={{ margin: '4px 0 0 0', fontSize: 'var(--font-size-sm)', color: '#94a3b8' }}>
-                                                AI will analyze for conditions
+                                                Trained veterinary disease detection model
                                             </p>
                                         </div>
                                     )}
@@ -718,17 +520,40 @@ export default function DiagnosisPanel() {
                                         </div>
 
                                         {imageAnalysis && (
-                                            <div className="alert alert-success" style={{ marginTop: 'var(--space-3)' }}>
-                                                <CheckCircle size={18} />
-                                                <div>
-                                                    <strong>Image Analysis Complete</strong>
-                                                    <div style={{ fontSize: 'var(--font-size-sm)', marginTop: 'var(--space-1)' }}>
-                                                        Detected: {imageAnalysis.detected_features?.slice(0, 3).join(', ') || 'No specific features'}
-                                                    </div>
-                                                    {imageAnalysis.suggested_conditions?.length > 0 && (
-                                                        <div style={{ fontSize: 'var(--font-size-sm)', marginTop: 'var(--space-1)' }}>
-                                                            Possible conditions: {imageAnalysis.suggested_conditions.slice(0, 2).map(c => c.condition?.replace(/_/g, ' ')).join(', ')}
+                                            <div style={{
+                                                marginTop: 'var(--space-4)',
+                                                border: '1px solid var(--color-success-200)',
+                                                borderRadius: 'var(--radius)',
+                                                overflow: 'hidden'
+                                            }}>
+                                                <div style={{
+                                                    padding: 'var(--space-3) var(--space-4)',
+                                                    background: 'linear-gradient(135deg, #065f46, #047857)',
+                                                    color: 'white',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 'var(--space-2)'
+                                                }}>
+                                                    <CheckCircle size={18} />
+                                                    <strong>AI Disease Detection Result</strong>
+                                                </div>
+                                                <div style={{ padding: 'var(--space-4)', textAlign: 'center' }}>
+                                                    {imageAnalysis.top_prediction ? (
+                                                        <div style={{
+                                                            fontSize: '1.25rem',
+                                                            fontWeight: 700,
+                                                            color: '#065f46',
+                                                            textTransform: 'capitalize',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            gap: '8px'
+                                                        }}>
+                                                            <Target size={20} />
+                                                            Predicted Disease: {imageAnalysis.top_prediction.disease?.replace(/_/g, ' ')}
                                                         </div>
+                                                    ) : (
+                                                        <div style={{ color: 'var(--color-gray-500)' }}>No clear prediction found</div>
                                                     )}
                                                 </div>
                                             </div>
@@ -736,22 +561,24 @@ export default function DiagnosisPanel() {
                                     </div>
                                 )}
 
-                                {/* Get AI Diagnosis Button (image-based) */}
-                                <button
-                                    className="btn btn-primary btn-lg"
-                                    style={{ width: '100%', marginTop: 'var(--space-6)' }}
-                                    onClick={handleDiagnose}
-                                    disabled={!patient || !symptoms.trim() || diagnosisMutation.isPending}
-                                >
-                                    {diagnosisMutation.isPending ? (
-                                        <span className="loading-spinner" style={{ width: 18, height: 18 }}></span>
-                                    ) : (
-                                        <>
-                                            <Brain size={18} />
-                                            Get AI Diagnosis
-                                        </>
-                                    )}
-                                </button>
+                                {/* Get Treatment Plan Button (image-based) */}
+                                {imageAnalysis?.top_prediction && (
+                                    <button
+                                        className="btn btn-success btn-lg"
+                                        style={{ width: '100%', marginTop: 'var(--space-4)' }}
+                                        onClick={handleGetTreatment}
+                                        disabled={treatmentMutation.isPending}
+                                    >
+                                        {treatmentMutation.isPending ? (
+                                            <span className="loading-spinner" style={{ width: 18, height: 18 }}></span>
+                                        ) : (
+                                            <>
+                                                <Pill size={18} />
+                                                Get Treatment for {imageAnalysis.top_prediction.disease?.replace(/_/g, ' ')}
+                                            </>
+                                        )}
+                                    </button>
+                                )}
                             </div>
                         </div>
                     )}
@@ -1003,64 +830,92 @@ export default function DiagnosisPanel() {
                             <div className="card-header">
                                 <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
                                     <Pill size={20} color="var(--color-success-500)" />
-                                    Treatment Plan
+                                    Treatment Recommendation
                                 </h3>
                             </div>
                             <div className="card-body">
-                                <h4 style={{ fontWeight: 600, marginBottom: 'var(--space-3)' }}>
-                                    Primary Diagnosis: {treatmentPlan.primary_diagnosis}
-                                </h4>
+                                {/* Predicted Disease */}
+                                <div style={{
+                                    padding: 'var(--space-3) var(--space-4)',
+                                    background: 'linear-gradient(135deg, #065f46, #047857)',
+                                    color: 'white',
+                                    borderRadius: 'var(--radius)',
+                                    marginBottom: 'var(--space-4)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 'var(--space-2)'
+                                }}>
+                                    <Target size={18} />
+                                    <strong>Predicted Disease:</strong>
+                                    <span style={{ marginLeft: 4 }}>{treatmentPlan.disease}</span>
+                                </div>
 
-                                {treatmentPlan.contraindications?.length > 0 && (
-                                    <div className="alert alert-warning" style={{ marginBottom: 'var(--space-4)' }}>
-                                        <AlertCircle size={18} />
-                                        <div>
-                                            <strong>Alerts:</strong>
-                                            <ul style={{ marginTop: 'var(--space-2)', marginLeft: 'var(--space-4)' }}>
-                                                {treatmentPlan.contraindications.map((c, idx) => (
-                                                    <li key={idx}>{c.medication}: {c.reason}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
+                                {/* Medicines */}
+                                <div style={{
+                                    padding: 'var(--space-4)',
+                                    border: '1px solid var(--color-gray-200)',
+                                    borderRadius: 'var(--radius)',
+                                    marginBottom: 'var(--space-3)'
+                                }}>
+                                    <h5 style={{ fontWeight: 600, marginBottom: 'var(--space-3)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                                        <Pill size={16} />
+                                        Medicines
+                                    </h5>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                        {treatmentPlan.medicines?.map((med, idx) => (
+                                            <div key={idx} style={{
+                                                padding: '8px 14px',
+                                                background: 'var(--color-success-50)',
+                                                borderRadius: 'var(--radius)',
+                                                border: '1px solid var(--color-success-200)',
+                                                fontSize: 'var(--font-size-base)',
+                                                fontWeight: 500,
+                                                color: '#065f46',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '8px'
+                                            }}>
+                                                <span style={{
+                                                    width: 22, height: 22, borderRadius: '50%',
+                                                    background: 'var(--color-success-500)', color: 'white',
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    fontSize: '0.7rem', fontWeight: 700, flexShrink: 0
+                                                }}>{idx + 1}</span>
+                                                {med}
+                                            </div>
+                                        ))}
                                     </div>
-                                )}
+                                </div>
 
-                                <h5 style={{ fontWeight: 600, marginBottom: 'var(--space-2)' }}>Medications</h5>
-                                {treatmentPlan.medications?.map((med, idx) => (
-                                    <div
-                                        key={idx}
-                                        style={{
-                                            padding: 'var(--space-4)',
-                                            border: '1px solid var(--color-gray-200)',
-                                            borderRadius: 'var(--radius)',
-                                            marginBottom: 'var(--space-3)'
-                                        }}
-                                    >
-                                        <div className="flex justify-between items-center">
-                                            <div style={{ fontWeight: 600 }}>{med.name}</div>
-                                            <span className="badge badge-primary">{med.category}</span>
-                                        </div>
-                                        <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-gray-600)', marginTop: 'var(--space-2)' }}>
-                                            {med.dosage?.instructions}
-                                        </div>
-                                        <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-gray-500)', marginTop: 'var(--space-1)' }}>
-                                            Dose: {med.dosage?.dose_mg}mg • Duration: {med.dosage?.duration_days} days
-                                        </div>
+                                {/* Treatment Duration */}
+                                <div style={{
+                                    padding: 'var(--space-4)',
+                                    border: '1px solid var(--color-gray-200)',
+                                    borderRadius: 'var(--radius)',
+                                    marginBottom: 'var(--space-3)'
+                                }}>
+                                    <h5 style={{ fontWeight: 600, marginBottom: 'var(--space-2)' }}>Treatment Duration</h5>
+                                    <div style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--color-primary-700)' }}>
+                                        {treatmentPlan.treatment_duration}
                                     </div>
-                                ))}
+                                </div>
 
-                                {treatmentPlan.dietary_recommendations && (
-                                    <div style={{ marginTop: 'var(--space-4)' }}>
-                                        <strong>Dietary Recommendations:</strong>
-                                        <p style={{ color: 'var(--color-gray-600)' }}>{treatmentPlan.dietary_recommendations}</p>
+                                {/* Clinical Notes */}
+                                <div style={{
+                                    padding: 'var(--space-4)',
+                                    border: '1px solid var(--color-warning-200)',
+                                    borderRadius: 'var(--radius)',
+                                    background: 'var(--color-warning-50)',
+                                    marginBottom: 'var(--space-3)'
+                                }}>
+                                    <h5 style={{ fontWeight: 600, marginBottom: 'var(--space-2)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                                        <AlertCircle size={16} />
+                                        Clinical Notes
+                                    </h5>
+                                    <div style={{ fontSize: 'var(--font-size-base)', color: '#92400e', fontWeight: 500 }}>
+                                        {treatmentPlan.notes}
                                     </div>
-                                )}
-
-                                {treatmentPlan.emergency_instructions && (
-                                    <div className="alert alert-error" style={{ marginTop: 'var(--space-4)' }}>
-                                        <strong>Emergency:</strong> {treatmentPlan.emergency_instructions}
-                                    </div>
-                                )}
+                                </div>
 
                                 {recordId && (
                                     <button

@@ -63,247 +63,369 @@ export default function Login() {
 
     const roleTitle = activeRole === 'doctor' ? 'Doctor' : 'Staff'
 
-    // Determine visual colors based on role
-    const primaryColor = activeRole === 'staff' ? '#567257' : '#896a58'
-    const secondaryColor = activeRole === 'staff' ? '#d9d8d5' : '#acab9e'
-    const textColor = '#2a2420'
-    const bgGradient = activeRole === 'staff'
-        ? 'linear-gradient(135deg, #d9d8d5 0%, #acab9e 100%)'
-        : 'linear-gradient(135deg, #acab9e 0%, #896a58 100%)';
-
-    const loginImage = activeRole === 'staff' ? '/staff.png' : '/doctor.png';
-
     return (
         <div style={{
             minHeight: '100vh',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: '#d9d8d5',
-            padding: '40px 20px',
-            fontFamily: 'var(--font-family)'
+            background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+            padding: '24px',
+            fontFamily: 'var(--font-family)',
+            position: 'relative',
+            overflow: 'hidden'
         }}>
-            <div style={{
-                display: 'flex',
-                flexDirection: 'row',
-                width: '100%',
-                maxWidth: 1000,
-                minHeight: 550,
-                background: 'white',
-                borderRadius: 24,
-                boxShadow: '0 20px 40px rgba(42, 36, 32, 0.1)',
-                overflow: 'hidden',
-                position: 'relative'
-            }}>
+            {/* Dynamic Background Elements */}
+            <div className="animate-blob" style={{
+                position: 'absolute',
+                top: '-10%',
+                left: '10%',
+                width: '40vw',
+                height: '40vw',
+                background: 'rgba(59, 130, 246, 0.15)',
+                filter: 'blur(80px)',
+                borderRadius: '50%',
+                zIndex: 0
+            }} />
+            <div className="animate-blob animation-delay-2000" style={{
+                position: 'absolute',
+                bottom: '-10%',
+                right: '10%',
+                width: '35vw',
+                height: '35vw',
+                background: 'rgba(6, 182, 212, 0.15)',
+                filter: 'blur(80px)',
+                borderRadius: '50%',
+                zIndex: 0
+            }} />
 
-                {/* LEFT SIDE - FORM */}
-                <div style={{
-                    flex: '0 0 45%',
-                    padding: '48px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    position: 'relative',
-                    zIndex: 2,
-                    background: 'white'
+            <div style={{ width: '100%', maxWidth: 480, position: 'relative', zIndex: 10 }}>
+
+                {/* Logo Section */}
+                <div style={{ 
+                    textAlign: 'center', 
+                    marginBottom: 40,
+                    animation: 'fadeIn 0.8s ease-out'
                 }}>
-
-                    {/* Header Logo */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 40 }}>
-                        <div style={{
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            width: 36, height: 36, background: primaryColor,
-                            borderRadius: 10, color: 'white'
-                        }}>
-                            <PawPrint size={20} />
-                        </div>
-                        <span style={{ fontSize: '1.25rem', fontWeight: 800, color: textColor }}>VetAI</span>
+                    <div style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 72,
+                        height: 72,
+                        background: 'rgba(255, 255, 255, 0.9)',
+                        backdropFilter: 'blur(8px)',
+                        borderRadius: 20,
+                        marginBottom: 16,
+                        boxShadow: '0 8px 32px rgba(31, 38, 135, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.4)'
+                    }}>
+                        <PawPrint size={36} color="#3b82f6" />
                     </div>
+                    <h1 style={{
+                        fontSize: '2.5rem',
+                        fontWeight: 800,
+                        color: '#0f172a',
+                        margin: 0,
+                        letterSpacing: '-0.025em',
+                        background: 'linear-gradient(to right, #1e293b, #3b82f6)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent'
+                    }}>VetAI</h1>
+                    <p style={{
+                        color: '#64748b',
+                        fontSize: '1rem',
+                        fontWeight: 500,
+                        marginTop: 4
+                    }}>Clinical Decision Support System</p>
+                </div>
 
-                    <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: textColor, marginBottom: 8 }}>
-                        {isRegister ? 'Create Account' : 'Login'}
-                    </h2>
-                    <p style={{ color: '#acab9e', marginBottom: 24, fontSize: '1.05rem', fontWeight: 600 }}>
-                        Welcome to {roleTitle} Platform
-                    </p>
+                {/* Main Glass Card */}
+                <div style={{
+                    background: 'rgba(255, 255, 255, 0.7)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                    borderRadius: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.5)',
+                    boxShadow: 'var(--shadow-premium)',
+                    overflow: 'hidden',
+                    animation: 'fadeIn 1s ease-out'
+                }}>
 
                     {/* Role Tabs */}
                     <div style={{
-                        display: 'flex', background: '#f8fafc', borderRadius: 12, padding: 4, marginBottom: 24
+                        display: 'flex',
+                        background: 'rgba(241, 245, 249, 0.5)',
+                        padding: '6px'
                     }}>
                         <button
                             type="button"
                             onClick={() => handleRoleSwitch('staff')}
                             style={{
-                                flex: 1, padding: '10px 0', border: 'none', borderRadius: 8,
+                                flex: 1,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 10,
+                                padding: '14px 0',
+                                border: 'none',
+                                borderRadius: '18px',
                                 background: activeRole === 'staff' ? 'white' : 'transparent',
-                                color: activeRole === 'staff' ? '#567257' : '#acab9e',
-                                fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer',
-                                boxShadow: activeRole === 'staff' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                                transition: 'all 0.2s'
+                                color: activeRole === 'staff' ? '#3b82f6' : '#64748b',
+                                fontWeight: activeRole === 'staff' ? 700 : 600,
+                                fontSize: '0.95rem',
+                                cursor: 'pointer',
+                                boxShadow: activeRole === 'staff' ? '0 4px 12px rgba(0,0,0,0.05)' : 'none',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                fontFamily: 'inherit'
                             }}
                         >
-                            <ClipboardList size={16} /> Staff
+                            <ClipboardList size={20} />
+                            Staff
                         </button>
                         <button
                             type="button"
                             onClick={() => handleRoleSwitch('doctor')}
                             style={{
-                                flex: 1, padding: '10px 0', border: 'none', borderRadius: 8,
+                                flex: 1,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 10,
+                                padding: '14px 0',
+                                border: 'none',
+                                borderRadius: '18px',
                                 background: activeRole === 'doctor' ? 'white' : 'transparent',
-                                color: activeRole === 'doctor' ? '#896a58' : '#acab9e',
-                                fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer',
-                                boxShadow: activeRole === 'doctor' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                                transition: 'all 0.2s'
+                                color: activeRole === 'doctor' ? '#3b82f6' : '#64748b',
+                                fontWeight: activeRole === 'doctor' ? 700 : 600,
+                                fontSize: '0.95rem',
+                                cursor: 'pointer',
+                                boxShadow: activeRole === 'doctor' ? '0 4px 12px rgba(0,0,0,0.05)' : 'none',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                fontFamily: 'inherit'
                             }}
                         >
-                            <Stethoscope size={16} /> Doctor
+                            <Stethoscope size={20} />
+                            Doctor
                         </button>
                     </div>
 
-                    {/* Error Alert */}
-                    {error && (
-                        <div style={{
-                            display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
-                            background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8,
-                            marginBottom: 16, color: '#dc2626', fontSize: '0.85rem'
-                        }}>
-                            <AlertCircle size={16} /><span>{error}</span>
-                        </div>
-                    )}
+                    {/* Form Content */}
+                    <div style={{ padding: '40px 48px' }}>
 
-                    {/* Form */}
-                    <form onSubmit={handleSubmit} style={{ flex: 1 }}>
-                        {/* Full Name */}
-                        {isRegister && (
-                            <div style={{ marginBottom: 16 }}>
-                                <div style={{ position: 'relative' }}>
-                                    <div style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}>
-                                        <User size={16} />
-                                    </div>
-                                    <input type="text" name="full_name" value={formData.full_name} onChange={handleChange}
-                                        placeholder={activeRole === 'doctor' ? 'Dr. John Smith' : 'John Smith'}
-                                        required
-                                        style={{ width: '100%', padding: '12px 16px 12px 40px', fontSize: '0.9rem', border: '1.5px solid #e2e8f0', borderRadius: 8, outline: 'none', transition: 'all 0.2s', fontFamily: 'inherit', color: '#334155', boxSizing: 'border-box' }}
-                                        onFocus={e => { e.target.style.borderColor = primaryColor; }}
-                                        onBlur={e => { e.target.style.borderColor = '#e2e8f0'; }}
-                                    />
-                                </div>
+                        {/* Heading */}
+                        <div style={{ marginBottom: 32 }}>
+                            <h2 style={{
+                                fontSize: '1.75rem',
+                                fontWeight: 800,
+                                color: '#0f172a',
+                                marginBottom: 8,
+                                letterSpacing: '-0.02em'
+                            }}>
+                                {isRegister ? 'Join VetAI' : 'Welcome Back'}
+                            </h2>
+                            <p style={{ color: '#64748b', fontSize: '0.95rem' }}>
+                                {isRegister ? `Register as a ${roleTitle} to get started.` : `Sign in to your ${roleTitle} account.`}
+                            </p>
+                        </div>
+
+                        {/* Error Alert */}
+                        {error && (
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 12,
+                                padding: '14px 18px',
+                                background: '#fef2f2',
+                                border: '1px solid #fee2e2',
+                                borderRadius: 12,
+                                marginBottom: 24,
+                                color: '#ef4444',
+                                fontSize: '0.9rem',
+                                fontWeight: 500
+                            }}>
+                                <AlertCircle size={20} />
+                                <span>{error}</span>
                             </div>
                         )}
 
-                        {/* Email */}
-                        <div style={{ marginBottom: 16 }}>
-                            <div style={{ position: 'relative' }}>
-                                <div style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}>
-                                    <User size={16} />
-                                </div>
-                                <input type="email" name="email" value={formData.email} onChange={handleChange}
-                                    placeholder="Username or email"
-                                    required
-                                    style={{ width: '100%', padding: '12px 16px 12px 40px', fontSize: '0.9rem', border: '1.5px solid #e2e8f0', borderRadius: 8, outline: 'none', transition: 'all 0.2s', fontFamily: 'inherit', color: '#334155', boxSizing: 'border-box' }}
-                                    onFocus={e => { e.target.style.borderColor = primaryColor; }}
-                                    onBlur={e => { e.target.style.borderColor = '#e2e8f0'; }}
-                                />
-                            </div>
-                        </div>
+                        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-                        {/* Password */}
-                        <div style={{ marginBottom: isRegister ? 16 : 8 }}>
-                            <div style={{ position: 'relative' }}>
-                                <div style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}>
-                                    <Lock size={16} />
-                                </div>
-                                <input type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange}
-                                    placeholder="password"
-                                    required minLength={6}
-                                    style={{ width: '100%', padding: '12px 40px 12px 40px', fontSize: '0.9rem', border: '1.5px solid #e2e8f0', borderRadius: 8, outline: 'none', transition: 'all 0.2s', fontFamily: 'inherit', color: '#334155', boxSizing: 'border-box' }}
-                                    onFocus={e => { e.target.style.borderColor = primaryColor; }}
-                                    onBlur={e => { e.target.style.borderColor = '#e2e8f0'; }}
-                                />
-                                <button type="button" onClick={() => setShowPassword(!showPassword)}
-                                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4, display: 'flex' }}>
-                                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                                </button>
-                            </div>
-                            {!isRegister && (
-                                <div style={{ textAlign: 'right', marginTop: 8 }}>
-                                    <span style={{ fontSize: '0.8rem', color: primaryColor, cursor: 'pointer', fontWeight: 600 }}>Forgot?</span>
+                            {/* Full Name (register only) */}
+                            {isRegister && (
+                                <div className="form-group" style={{ margin: 0 }}>
+                                    <label className="form-label" style={{ fontWeight: 600, color: '#334155', display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <User size={16} color="#64748b" />
+                                        Full Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="full_name"
+                                        value={formData.full_name}
+                                        onChange={handleChange}
+                                        placeholder={activeRole === 'doctor' ? 'Dr. John Smith' : 'John Smith'}
+                                        required
+                                        className="form-input"
+                                        style={{
+                                            borderRadius: 12,
+                                            padding: '12px 16px',
+                                            background: 'rgba(255, 255, 255, 0.8)',
+                                            border: '1.5px solid rgba(226, 232, 240, 0.8)'
+                                        }}
+                                    />
                                 </div>
                             )}
+
+                            {/* Email */}
+                            <div className="form-group" style={{ margin: 0 }}>
+                                <label className="form-label" style={{ fontWeight: 600, color: '#334155', display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <Mail size={16} color="#64748b" />
+                                    Email Address
+                                </label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    placeholder={activeRole === 'doctor' ? 'doctor@hospital.com' : 'staff@hospital.com'}
+                                    required
+                                    className="form-input"
+                                    style={{
+                                        borderRadius: 12,
+                                        padding: '12px 16px',
+                                        background: 'rgba(255, 255, 255, 0.8)',
+                                        border: '1.5px solid rgba(226, 232, 240, 0.8)'
+                                    }}
+                                />
+                            </div>
+
+                            {/* Password */}
+                            <div className="form-group" style={{ margin: 0, position: 'relative' }}>
+                                <label className="form-label" style={{ fontWeight: 600, color: '#334155', display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <Lock size={16} color="#64748b" />
+                                    Password
+                                </label>
+                                <div style={{ position: 'relative' }}>
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        name="password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        placeholder="••••••••"
+                                        required
+                                        minLength={6}
+                                        className="form-input"
+                                        style={{
+                                            borderRadius: 12,
+                                            padding: '12px 16px',
+                                            paddingRight: 48,
+                                            background: 'rgba(255, 255, 255, 0.8)',
+                                            border: '1.5px solid rgba(226, 232, 240, 0.8)'
+                                        }}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        style={{
+                                            position: 'absolute',
+                                            right: 14,
+                                            top: '50%',
+                                            transform: 'translateY(-50%)',
+                                            background: 'none',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            color: '#94a3b8',
+                                            padding: 4,
+                                            display: 'flex',
+                                            borderRadius: '8px',
+                                            transition: 'all 0.2s'
+                                        }}
+                                        onMouseEnter={e => e.target.style.background = 'rgba(0,0,0,0.05)'}
+                                        onMouseLeave={e => e.target.style.background = 'none'}
+                                    >
+                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Login Button */}
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="btn-primary"
+                                style={{
+                                    width: '100%',
+                                    padding: '16px 24px',
+                                    marginTop: 8,
+                                    fontSize: '1rem',
+                                    fontWeight: 700,
+                                    borderRadius: 14,
+                                    cursor: loading ? 'not-allowed' : 'pointer',
+                                    boxShadow: '0 8px 24px rgba(59, 130, 246, 0.2)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: 12,
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                                }}
+                            >
+                                {loading ? (
+                                    <div className="loading-spinner" style={{ borderTopColor: 'white' }} />
+                                ) : (
+                                    <>
+                                        {isRegister ? 'Create Account' : 'Login to System'}
+                                        {!isRegister && <PawPrint size={18} style={{ opacity: 0.8 }} />}
+                                    </>
+                                )}
+                            </button>
+                        </form>
+
+                        {/* Footer Link */}
+                        <div style={{
+                            textAlign: 'center',
+                            marginTop: 32,
+                            fontSize: '0.95rem',
+                            color: '#64748b',
+                            fontWeight: 500
+                        }}>
+                            {isRegister ? 'Already have an account? ' : "Don't have an account? "}
+                            <button
+                                type="button"
+                                onClick={() => { setIsRegister(!isRegister); setError(''); }}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    color: '#3b82f6',
+                                    cursor: 'pointer',
+                                    fontWeight: 700,
+                                    fontSize: '0.95rem',
+                                    fontFamily: 'inherit',
+                                    padding: '0 4px'
+                                }}
+                            >
+                                {isRegister ? 'Sign In' : 'Register Here'}
+                            </button>
                         </div>
-
-                        {/* Login Button */}
-                        <button type="submit" disabled={loading}
-                            style={{
-                                width: '100%', padding: '12px 24px', marginTop: 16, fontSize: '0.95rem', fontWeight: 600,
-                                color: 'white', background: primaryColor, border: 'none', borderRadius: 8,
-                                cursor: loading ? 'not-allowed' : 'pointer', transition: 'all 0.2s ease',
-                                boxShadow: `0 4px 14px ${primaryColor}60`, fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8
-                            }}
-                            onMouseEnter={e => { if (!loading) { e.target.style.transform = 'translateY(-1px)'; e.target.style.boxShadow = `0 6px 20px ${primaryColor}80`; } }}
-                            onMouseLeave={e => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = `0 4px 14px ${primaryColor}60`; }}
-                        >
-                            {loading ? <span style={{ display: 'inline-block', width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} /> : (isRegister ? 'Create Account' : 'Login')}
-                        </button>
-                    </form>
-
-                    <div style={{ textAlign: 'center', marginTop: 20, fontSize: '0.85rem', color: '#64748b' }}>
-                        {isRegister ? 'Already have an account? ' : "Don't have an account? "}
-                        <button type="button" onClick={() => { setIsRegister(!isRegister); setError(''); }}
-                            style={{ background: 'none', border: 'none', color: primaryColor, cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', fontFamily: 'inherit', padding: 0 }}
-                            onMouseEnter={e => e.target.style.textDecoration = 'underline'}
-                            onMouseLeave={e => e.target.style.textDecoration = 'none'}
-                        >
-                            {isRegister ? 'Sign in' : 'Register here'}
-                        </button>
                     </div>
                 </div>
 
-                {/* RIGHT SIDE - IMAGE & WAVE */}
+                {/* System Label */}
                 <div style={{
-                    flex: '1',
-                    position: 'relative',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: bgGradient,
-                    overflow: 'hidden'
+                    textAlign: 'center',
+                    marginTop: 40,
+                    opacity: 0.6
                 }}>
-                    {/* Wavy Cutout Divider using SVG */}
-                    <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{
-                        position: 'absolute',
-                        left: -1, top: 0,
-                        width: '20%', height: '100%',
-                        zIndex: 2, fill: 'white'
+                    <p style={{
+                        color: '#64748b',
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        letterSpacing: '0.05em',
+                        textTransform: 'uppercase'
                     }}>
-                        <path d="M0,0 C100,20 100,80 0,100 Z" />
-                    </svg>
-
-                    {/* Decorative Background Elements */}
-                    <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '60%', height: '60%', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', zIndex: 0 }} />
-                    <div style={{ position: 'absolute', bottom: '-5%', left: '10%', width: '40%', height: '40%', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', zIndex: 0 }} />
-
-                    {/* Overlay Plus icon (from reference image) */}
-                    <div style={{ position: 'absolute', bottom: '20%', right: '20%', color: 'white', opacity: 0.6, fontSize: '4rem', fontWeight: 'bold', zIndex: 0 }}>+</div>
-
-                    <img
-                        src={loginImage}
-                        alt="Login Medical Professional"
-                        style={{
-                            position: 'relative',
-                            zIndex: 1,
-                            width: '75%',
-                            maxHeight: '85%',
-                            objectFit: 'contain',
-                            filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.15))',
-                            transition: 'opacity 0.3s'
-                        }}
-                    />
+                        © 2026 VetAI Healthcare Systems • Secure Access
+                    </p>
                 </div>
             </div>
-
         </div>
     )
 }
