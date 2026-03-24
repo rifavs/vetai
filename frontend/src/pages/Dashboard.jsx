@@ -21,28 +21,28 @@ export default function Dashboard() {
             label: 'Waiting Patients',
             value: queueData?.total_waiting || 0,
             icon: Users,
-            color: 'var(--color-warning-500)',
+            color: 'var(--color-warning-600)',
             bgColor: 'var(--color-warning-50)'
         },
         {
             label: 'In Progress',
             value: queueData?.in_progress?.length || 0,
             icon: Activity,
-            color: 'var(--color-primary-500)',
+            color: 'var(--color-primary-600)',
             bgColor: 'var(--color-primary-50)'
         },
         {
             label: 'Avg Wait Time',
             value: queueData?.average_wait_minutes ? `${Math.round(queueData.average_wait_minutes)} min` : 'N/A',
             icon: Clock,
-            color: 'var(--color-secondary-500)',
+            color: 'var(--color-secondary-600)',
             bgColor: 'var(--color-secondary-50)'
         },
         {
             label: 'Next Token',
             value: queueData?.next_token || '-',
             icon: CheckCircle,
-            color: 'var(--color-success-500)',
+            color: 'var(--color-success-600)',
             bgColor: 'var(--color-success-50)'
         }
     ]

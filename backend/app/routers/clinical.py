@@ -93,3 +93,17 @@ async def get_my_records(
         limit=limit
     )
     return records
+
+@router.delete("/records/{record_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_clinical_record(
+    record_id: str,
+    current_user: User = Depends(require_doctor)
+):
+    """Delete a clinical record."""
+    deleted = await ClinicalService.delete_record(record_id)
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Clinical record not found or could not be deleted"
+        )
+    return None

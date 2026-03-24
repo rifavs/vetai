@@ -51,7 +51,7 @@ export default function QueueDisplay() {
                             width: 50,
                             height: 50,
                             borderRadius: 'var(--radius-lg)',
-                            background: 'var(--color-warning-500)',
+                            background: 'var(--color-warning-600)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center'
@@ -71,7 +71,7 @@ export default function QueueDisplay() {
                             width: 50,
                             height: 50,
                             borderRadius: 'var(--radius-lg)',
-                            background: 'var(--color-primary-500)',
+                            background: 'var(--color-primary-600)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center'
@@ -91,7 +91,7 @@ export default function QueueDisplay() {
                             width: 50,
                             height: 50,
                             borderRadius: 'var(--radius-lg)',
-                            background: 'var(--color-secondary-500)',
+                            background: 'var(--color-secondary-600)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center'
@@ -111,7 +111,7 @@ export default function QueueDisplay() {
             {/* Now Being Served */}
             {queueData?.in_progress?.length > 0 && (
                 <div className="card mb-6" style={{
-                    background: 'linear-gradient(135deg, var(--color-success-500), var(--color-secondary-500))',
+                    background: 'linear-gradient(135deg, var(--color-success-600), var(--color-secondary-600))',
                     color: 'white'
                 }}>
                     <div className="card-body" style={{ textAlign: 'center', padding: 'var(--space-8)' }}>
@@ -141,7 +141,7 @@ export default function QueueDisplay() {
             {/* Next Token Display */}
             {queueData?.next_token && (
                 <div className="card mb-6" style={{
-                    background: 'linear-gradient(135deg, var(--color-warning-500), var(--color-accent-500))',
+                    background: 'linear-gradient(135deg, var(--color-warning-600), var(--color-accent-600))',
                     color: 'white'
                 }}>
                     <div className="card-body" style={{ textAlign: 'center', padding: 'var(--space-6)' }}>
@@ -186,7 +186,7 @@ export default function QueueDisplay() {
                                                 display: 'inline-flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
-                                                background: idx === 0 ? 'var(--color-success-500)' : 'var(--color-gray-200)',
+                                                background: idx === 0 ? 'var(--color-success-600)' : 'var(--color-gray-200)',
                                                 color: idx === 0 ? 'white' : 'var(--color-gray-700)',
                                                 borderRadius: '50%',
                                                 fontWeight: 600

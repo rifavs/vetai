@@ -153,7 +153,7 @@ export default function ReportViewer() {
                 }
                 .confidence-bar-fill {
                     height: 100%;
-                    background: var(--color-primary-500);
+                    background: var(--color-primary-600);
                     border-radius: var(--radius-full);
                     transition: width 1s ease-out;
                 }

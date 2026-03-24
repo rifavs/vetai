@@ -2,58 +2,58 @@
 
 /* ===== CSS Variables / Design Tokens ===== */
 :root {
-  /* Primary Colors - Deep Medical Blue */
-  --color-primary-50: #eef5ff;
-  --color-primary-100: #d9e8ff;
-  --color-primary-200: #bcd6ff;
-  --color-primary-300: #8ebbff;
-  --color-primary-400: #5996ff;
-  --color-primary-500: #3371ff;
-  --color-primary-600: #1a4df5;
-  --color-primary-700: #1339e1;
-  --color-primary-800: #162fb6;
-  --color-primary-900: #182c8f;
+  /* Primary Colors - Brown (#896A58 base) */
+  --color-primary-50: #f8f5f3;
+  --color-primary-100: #ebdcd3;
+  --color-primary-200: #d8bea9;
+  --color-primary-300: #c29d81;
+  --color-primary-400: #a97f64;
+  --color-primary-500: #896a58;
+  --color-primary-600: #765747;
+  --color-primary-700: #5f4436;
+  --color-primary-800: #4a3328;
+  --color-primary-900: #2a2420;
 
-  /* Secondary Colors - Teal */
-  --color-secondary-50: #effefb;
-  --color-secondary-100: #c8fff4;
-  --color-secondary-200: #91ffea;
-  --color-secondary-300: #52f7dc;
-  --color-secondary-400: #1de4c9;
-  --color-secondary-500: #05c7af;
-  --color-secondary-600: #00a090;
-  --color-secondary-700: #058075;
-  --color-secondary-800: #0a655f;
-  --color-secondary-900: #0d544e;
+  /* Secondary Colors - Sage (#ACAB9E base) */
+  --color-secondary-50: #f8f8f6;
+  --color-secondary-100: #eaeae6;
+  --color-secondary-200: #d1d0c8;
+  --color-secondary-300: #b9b8aa;
+  --color-secondary-400: #acab9e;
+  --color-secondary-500: #939281;
+  --color-secondary-600: #777665;
+  --color-secondary-700: #5c5a4b;
+  --color-secondary-800: #424134;
+  --color-secondary-900: #25241b;
 
-  /* Accent Colors - Warm Orange */
-  --color-accent-500: #ff7e33;
-  --color-accent-600: #f25c10;
+  /* Accent Colors - Forest Green (#567257 base) */
+  --color-accent-500: #567257;
+  --color-accent-600: #455e46;
 
   /* Semantic Colors */
   --color-success-50: #ecfdf5;
   --color-success-500: #10b981;
   --color-success-600: #059669;
-  
+
   --color-warning-50: #fffbeb;
   --color-warning-500: #f59e0b;
   --color-warning-600: #d97706;
-  
+
   --color-error-50: #fef2f2;
   --color-error-500: #ef4444;
   --color-error-600: #dc2626;
 
-  /* Neutral Colors */
-  --color-gray-50: #f9fafb;
-  --color-gray-100: #f3f4f6;
-  --color-gray-200: #e5e7eb;
-  --color-gray-300: #d1d5db;
-  --color-gray-400: #9ca3af;
-  --color-gray-500: #6b7280;
-  --color-gray-600: #4b5563;
-  --color-gray-700: #374151;
-  --color-gray-800: #1f2937;
-  --color-gray-900: #111827;
+  /* Neutral Colors (Warm Beige/Grey base #D9D8D5) */
+  --color-gray-50: #faf9f8;
+  --color-gray-100: #f0efe5;
+  --color-gray-200: #d9d8d5;
+  --color-gray-300: #bfbeba;
+  --color-gray-400: #9f9f9b;
+  --color-gray-500: #807f7b;
+  --color-gray-600: #64635e;
+  --color-gray-700: #4b4a45;
+  --color-gray-800: #2a2420;
+  --color-gray-900: #1a1512;
 
   /* Typography */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -98,7 +98,9 @@
 }
 
 /* ===== Reset & Base ===== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -115,7 +117,7 @@ body {
   font-size: var(--font-size-base);
   line-height: 1.5;
   color: var(--color-gray-900);
-  background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-primary-50) 100%);
+  background: var(--color-gray-200); /* D9D8D5 */
   min-height: 100vh;
 }
 
@@ -378,8 +380,15 @@ body {
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.02);
+  }
 }
 
 /* ===== Stats Card ===== */
@@ -453,7 +462,9 @@ body {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-skeleton {
@@ -464,8 +475,13 @@ body {
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* ===== Alert Components ===== */
@@ -520,22 +536,30 @@ body {
 }
 
 @media (max-width: 1024px) {
-  .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
-  .grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
-  .grid-cols-4, .grid-cols-3, .grid-cols-2 { 
-    grid-template-columns: 1fr; 
+
+  .grid-cols-4,
+  .grid-cols-3,
+  .grid-cols-2 {
+    grid-template-columns: 1fr;
   }
-  
+
   .sidebar {
     width: 100%;
     position: fixed;
     left: -100%;
     z-index: 1000;
   }
-  
+
   .sidebar.open {
     left: 0;
   }

@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { clinicalAPI, diagnosisAPI, patientsAPI, treatmentAPI, reportsAPI, imagesAPI, voiceAPI } from '../services/api'
 import { Brain, AlertCircle, CheckCircle, HelpCircle, Pill, FileText, Download, Upload, Image, X, Mic, MicOff, Volume2, Target, Shield, Scan, Eye } from 'lucide-react'
@@ -7,11 +7,18 @@ import { Brain, AlertCircle, CheckCircle, HelpCircle, Pill, FileText, Download, 
 export default function DiagnosisPanel() {
     const { recordId } = useParams()
     const navigate = useNavigate()
+    const location = useLocation()
 
     const [symptoms, setSymptoms] = useState('')
     const [selectedPatientId, setSelectedPatientId] = useState('')
     const [patientSearch, setPatientSearch] = useState('')
     const [diagnosisResult, setDiagnosisResult] = useState(null)
+    
+    useEffect(() => {
+        if (location.state?.patientId && !selectedPatientId) {
+            setSelectedPatientId(location.state.patientId)
+        }
+    }, [location.state, selectedPatientId])
     const [treatmentPlan, setTreatmentPlan] = useState(null)
     const [activeTab, setActiveTab] = useState('symptoms')
 

@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { PawPrint, Stethoscope, ClipboardList, Mail, Lock, User, AlertCircle, Eye, EyeOff } from 'lucide-react'
+import { PawPrint, Stethoscope, ClipboardList, User, Mail, Lock, AlertCircle, Eye, EyeOff } from 'lucide-react'
 
-export default function Login() {
-    const [isRegister, setIsRegister] = useState(false)
+export default function Register() {
     const [activeRole, setActiveRole] = useState('staff')
     const [showPassword, setShowPassword] = useState(false)
     const [formData, setFormData] = useState({
@@ -16,7 +15,7 @@ export default function Login() {
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
 
-    const { login, register } = useAuth()
+    const { register, login } = useAuth()
     const navigate = useNavigate()
 
     const handleRoleSwitch = (role) => {
@@ -36,23 +35,17 @@ export default function Login() {
         setError('')
 
         try {
-            if (isRegister) {
-                const result = await register({ ...formData, role: activeRole })
-                if (result.success) {
-                    const loginResult = await login(formData.email, formData.password)
-                    if (loginResult.success) {
-                        navigate('/dashboard')
-                    }
-                } else {
-                    setError(result.error)
-                }
-            } else {
-                const result = await login(formData.email, formData.password)
-                if (result.success) {
+            const result = await register({ ...formData, role: activeRole })
+            if (result.success) {
+                // Auto-login after successful registration
+                const loginResult = await login(formData.email, formData.password)
+                if (loginResult.success) {
                     navigate('/dashboard')
                 } else {
-                    setError(result.error)
+                    navigate('/login')
                 }
+            } else {
+                setError(result.error)
             }
         } catch (err) {
             setError('An unexpected error occurred')
@@ -71,7 +64,7 @@ export default function Login() {
         ? 'linear-gradient(135deg, #d9d8d5 0%, #acab9e 100%)'
         : 'linear-gradient(135deg, #acab9e 0%, #896a58 100%)';
 
-    const loginImage = activeRole === 'staff' ? '/staff.png' : '/doctor.png';
+    const registerImage = activeRole === 'staff' ? '/staff.png' : '/doctor.png';
 
     return (
         <div style={{
@@ -108,7 +101,7 @@ export default function Login() {
                 }}>
 
                     {/* Header Logo */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 40 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 12, marginBottom: 40, cursor: 'pointer' }} onClick={() => navigate('/')}>
                         <div style={{
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             width: 36, height: 36, background: primaryColor,
@@ -120,7 +113,7 @@ export default function Login() {
                     </div>
 
                     <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: textColor, marginBottom: 8 }}>
-                        {isRegister ? 'Create Account' : 'Login'}
+                        Create Account
                     </h2>
                     <p style={{ color: '#acab9e', marginBottom: 24, fontSize: '1.05rem', fontWeight: 600 }}>
                         Welcome to {roleTitle} Platform
@@ -176,31 +169,29 @@ export default function Login() {
                     {/* Form */}
                     <form onSubmit={handleSubmit} style={{ flex: 1 }}>
                         {/* Full Name */}
-                        {isRegister && (
-                            <div style={{ marginBottom: 16 }}>
-                                <div style={{ position: 'relative' }}>
-                                    <div style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}>
-                                        <User size={16} />
-                                    </div>
-                                    <input type="text" name="full_name" value={formData.full_name} onChange={handleChange}
-                                        placeholder={activeRole === 'doctor' ? 'Dr. John Smith' : 'John Smith'}
-                                        required
-                                        style={{ width: '100%', padding: '12px 16px 12px 40px', fontSize: '0.9rem', border: '1.5px solid #e2e8f0', borderRadius: 8, outline: 'none', transition: 'all 0.2s', fontFamily: 'inherit', color: '#334155', boxSizing: 'border-box' }}
-                                        onFocus={e => { e.target.style.borderColor = primaryColor; }}
-                                        onBlur={e => { e.target.style.borderColor = '#e2e8f0'; }}
-                                    />
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Email */}
                         <div style={{ marginBottom: 16 }}>
                             <div style={{ position: 'relative' }}>
                                 <div style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}>
                                     <User size={16} />
                                 </div>
+                                <input type="text" name="full_name" value={formData.full_name} onChange={handleChange}
+                                    placeholder={activeRole === 'doctor' ? 'Dr. John Smith' : 'John Smith'}
+                                    required
+                                    style={{ width: '100%', padding: '12px 16px 12px 40px', fontSize: '0.9rem', border: '1.5px solid #e2e8f0', borderRadius: 8, outline: 'none', transition: 'all 0.2s', fontFamily: 'inherit', color: '#334155', boxSizing: 'border-box' }}
+                                    onFocus={e => { e.target.style.borderColor = primaryColor; }}
+                                    onBlur={e => { e.target.style.borderColor = '#e2e8f0'; }}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Email */}
+                        <div style={{ marginBottom: 16 }}>
+                            <div style={{ position: 'relative' }}>
+                                <div style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}>
+                                    <Mail size={16} />
+                                </div>
                                 <input type="email" name="email" value={formData.email} onChange={handleChange}
-                                    placeholder="Username or email"
+                                    placeholder={activeRole === 'doctor' ? 'doctor@hospital.com' : 'staff@hospital.com'}
                                     required
                                     style={{ width: '100%', padding: '12px 16px 12px 40px', fontSize: '0.9rem', border: '1.5px solid #e2e8f0', borderRadius: 8, outline: 'none', transition: 'all 0.2s', fontFamily: 'inherit', color: '#334155', boxSizing: 'border-box' }}
                                     onFocus={e => { e.target.style.borderColor = primaryColor; }}
@@ -210,7 +201,7 @@ export default function Login() {
                         </div>
 
                         {/* Password */}
-                        <div style={{ marginBottom: isRegister ? 16 : 8 }}>
+                        <div style={{ marginBottom: 16 }}>
                             <div style={{ position: 'relative' }}>
                                 <div style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}>
                                     <Lock size={16} />
@@ -227,14 +218,9 @@ export default function Login() {
                                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                 </button>
                             </div>
-                            {!isRegister && (
-                                <div style={{ textAlign: 'right', marginTop: 8 }}>
-                                    <span style={{ fontSize: '0.8rem', color: primaryColor, cursor: 'pointer', fontWeight: 600 }}>Forgot?</span>
-                                </div>
-                            )}
                         </div>
 
-                        {/* Login Button */}
+                        {/* Register Button */}
                         <button type="submit" disabled={loading}
                             style={{
                                 width: '100%', padding: '12px 24px', marginTop: 16, fontSize: '0.95rem', fontWeight: 600,
@@ -245,18 +231,18 @@ export default function Login() {
                             onMouseEnter={e => { if (!loading) { e.target.style.transform = 'translateY(-1px)'; e.target.style.boxShadow = `0 6px 20px ${primaryColor}80`; } }}
                             onMouseLeave={e => { e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = `0 4px 14px ${primaryColor}60`; }}
                         >
-                            {loading ? <span style={{ display: 'inline-block', width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} /> : (isRegister ? 'Create Account' : 'Login')}
+                            {loading ? <span style={{ display: 'inline-block', width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} /> : 'Create Account'}
                         </button>
                     </form>
 
                     <div style={{ textAlign: 'center', marginTop: 20, fontSize: '0.85rem', color: '#64748b' }}>
-                        {isRegister ? 'Already have an account? ' : "Don't have an account? "}
-                        <button type="button" onClick={() => { setIsRegister(!isRegister); setError(''); }}
+                        Already have an account?{' '}
+                        <button type="button" onClick={() => navigate('/login')}
                             style={{ background: 'none', border: 'none', color: primaryColor, cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', fontFamily: 'inherit', padding: 0 }}
                             onMouseEnter={e => e.target.style.textDecoration = 'underline'}
                             onMouseLeave={e => e.target.style.textDecoration = 'none'}
                         >
-                            {isRegister ? 'Sign in' : 'Register here'}
+                            Sign in
                         </button>
                     </div>
                 </div>
@@ -289,8 +275,8 @@ export default function Login() {
                     <div style={{ position: 'absolute', bottom: '20%', right: '20%', color: 'white', opacity: 0.6, fontSize: '4rem', fontWeight: 'bold', zIndex: 0 }}>+</div>
 
                     <img
-                        src={loginImage}
-                        alt="Login Medical Professional"
+                        src={registerImage}
+                        alt="Medical Professional"
                         style={{
                             position: 'relative',
                             zIndex: 1,

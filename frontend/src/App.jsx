@@ -2,7 +2,9 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 
 // Pages
+import Home from './pages/Home'
 import Login from './pages/Login'
+import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import StaffDashboard from './pages/StaffDashboard'
 import DoctorDashboard from './pages/DoctorDashboard'
@@ -10,6 +12,9 @@ import PatientRegistration from './pages/PatientRegistration'
 import QueueDisplay from './pages/QueueDisplay'
 import DiagnosisPanel from './pages/DiagnosisPanel'
 import ReportViewer from './pages/ReportViewer'
+import PatientsList from './pages/PatientsList'
+import PatientDetails from './pages/PatientDetails'
+import PatientEdit from './pages/PatientEdit'
 
 // Components
 import Sidebar from './components/Sidebar'
@@ -57,7 +62,9 @@ function App() {
     return (
         <Routes>
             {/* Public Routes */}
+            <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
             {/* Protected Routes */}
             <Route path="/dashboard" element={
@@ -116,9 +123,32 @@ function App() {
                 </ProtectedRoute>
             } />
 
+            <Route path="/patients" element={
+                <ProtectedRoute>
+                    <AppLayout>
+                        <PatientsList />
+                    </AppLayout>
+                </ProtectedRoute>
+            } />
+
+            <Route path="/patients/:patientId" element={
+                <ProtectedRoute>
+                    <AppLayout>
+                        <PatientDetails />
+                    </AppLayout>
+                </ProtectedRoute>
+            } />
+
+            <Route path="/patients/:patientId/edit" element={
+                <ProtectedRoute>
+                    <AppLayout>
+                        <PatientEdit />
+                    </AppLayout>
+                </ProtectedRoute>
+            } />
+
             {/* Default Redirect */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     )
 }

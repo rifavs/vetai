@@ -71,6 +71,7 @@ export const clinicalAPI = {
     createRecord: (data) => api.post('/clinical/records', data),
     getRecord: (id) => api.get(`/clinical/records/${id}`),
     updateRecord: (id, data) => api.put(`/clinical/records/${id}`, data),
+    deleteRecord: (id) => api.delete(`/clinical/records/${id}`),
     completeRecord: (id) => api.post(`/clinical/records/${id}/complete`),
     patientRecords: (patientId) => api.get(`/clinical/patient/${patientId}/records`),
     myRecords: (params) => api.get('/clinical/my-records', { params }),

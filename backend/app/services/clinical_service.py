@@ -139,3 +139,10 @@ class ClinicalService:
     async def complete_record(cls, record_id: str) -> Optional[ClinicalRecord]:
         """Mark clinical record as completed."""
         return await cls.update_record(record_id, {"status": "completed"})
+        
+    @classmethod
+    async def delete_record(cls, record_id: str) -> bool:
+        """Delete clinical record."""
+        records = Database.get_collection("clinical_records")
+        result = await records.delete_one({"_id": ObjectId(record_id)})
+        return result.deleted_count > 0

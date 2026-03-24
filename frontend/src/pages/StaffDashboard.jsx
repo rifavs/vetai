@@ -73,7 +73,7 @@ export default function StaffDashboard() {
                     <div className="card-body">
                         {issuedToken ? (
                             <div style={{ textAlign: 'center', padding: 'var(--space-4)' }}>
-                                <CheckCircle size={48} color="var(--color-success-500)" style={{ marginBottom: 'var(--space-3)' }} />
+                                <CheckCircle size={48} color="var(--color-success-600)" style={{ marginBottom: 'var(--space-3)' }} />
                                 <h4 style={{ marginBottom: 'var(--space-2)' }}>Token Issued Successfully!</h4>
                                 <div className="token-display" style={{ marginBottom: 'var(--space-4)' }}>
                                     {issuedToken.token_number}

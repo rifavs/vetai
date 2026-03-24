@@ -109,10 +109,10 @@ export default function DoctorDashboard() {
 
             {/* Active Cases */}
             {activeTokens?.length > 0 && (
-                <div className="card mb-6" style={{ borderLeft: '4px solid var(--color-primary-500)' }}>
+                <div className="card mb-6" style={{ borderLeft: '4px solid var(--color-primary-600)' }}>
                     <div className="card-header">
                         <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                            <Stethoscope size={20} color="var(--color-primary-500)" />
+                            <Stethoscope size={20} color="var(--color-primary-600)" />
                             Active Cases
                         </h3>
                     </div>
