@@ -83,6 +83,7 @@ export const diagnosisAPI = {
     refineWithSymptoms: (data) => api.post('/diagnosis/refine-symptoms', data),
     finalize: (data) => api.post('/diagnosis/finalize', data),
     get: (id) => api.get(`/diagnosis/${id}`),
+    patientDiagnoses: (patientId) => api.get(`/diagnosis/patient/${patientId}`),
 }
 
 export const treatmentAPI = {

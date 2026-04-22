@@ -278,6 +278,26 @@ async def refine_diagnosis(
     return DiagnosisResult(**refined_doc)
 
 
+@router.get("/patient/{patient_id}", response_model_by_alias=False)
+async def get_patient_diagnoses(
+    patient_id: str,
+    limit: int = 50,
+    current_user: User = Depends(get_current_user)
+):
+    """Get all diagnoses for a patient, newest first."""
+    from ..database import Database
+
+    diagnoses = Database.get_collection("diagnoses")
+    cursor = diagnoses.find({"patient_id": patient_id}).sort("created_at", -1).limit(limit)
+
+    result = []
+    async for doc in cursor:
+        doc["_id"] = str(doc["_id"])
+        result.append(doc)
+
+    return result
+
+
 @router.get("/{diagnosis_id}", response_model=DiagnosisResult, response_model_by_alias=False)
 async def get_diagnosis(
     diagnosis_id: str,
